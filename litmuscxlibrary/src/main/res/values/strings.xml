@@ -1,0 +1,9 @@
+<resources>
+    <string name="litmus_unable_load">Unable to load</string>
+    <string name="litmus_reload">Tap to reload</string>
+    <string name="litmus_close">Close</string>
+    <string name="copy_link">Copy Link</string>
+    <string name="share_link">Share Link</string>
+    <string name="close">Close</string>
+    <string name="feedback_submitted">Thank you for your interest. You have already submitted your feedback</string>
+</resources>

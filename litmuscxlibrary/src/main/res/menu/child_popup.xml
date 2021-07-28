@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" >
+
+    <item
+        android:id="@+id/action_copy_link"
+        android:title="@string/copy_link"
+        android:visible="false"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_share_link"
+        android:title="@string/share_link"
+        android:visible="false"
+        android:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_close"
+        android:title="@string/close"
+        android:visible="true"
+        android:showAsAction="never" />
+
+
+
+</menu>

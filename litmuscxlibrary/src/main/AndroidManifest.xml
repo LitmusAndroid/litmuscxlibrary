@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.litmusworld.litmuscxlibrary">
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Network State Permissions to detect Internet status -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- Required for File upload feature -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <application
+        android:supportsRtl="true">
+
+        <!-- Production URL -->
+        <meta-data
+            android:name="LitmusApiURL"
+            android:value="https://app.litmusworld.com/rateus"
+            tools:replace="android:value" />
+
+        <!-- Development URL -->
+        <!--<meta-data
+            android:name="LitmusApiURL"
+            android:value="https://demo.litmusworld.com" />-->
+
+
+        <!-- Staging URL -->
+        <!--<meta-data
+            android:name="LitmusApiURL"
+            android:value="https://staging.litmusworld.com/rateus" />-->
+
+
+        <!--android:windowSoftInputMode="adjustPan"-->
+        <activity
+            android:name="com.litmusworld.litmuscxlibrary.activities.LitmusRatingActivity"
+            android:windowSoftInputMode="adjustPan" >
+
+        </activity>
+
+    </application>
+</manifest>

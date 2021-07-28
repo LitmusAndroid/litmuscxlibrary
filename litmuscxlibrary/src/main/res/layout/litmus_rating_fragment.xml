@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <WebView
+        android:id="@+id/web_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/ll_main_reload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/image_reload"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/litmus_reload"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/litmus_unable_load"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/litmus_reload"
+            android:textColor="@android:color/black"
+            android:layout_marginTop="5dp"/>
+
+    </LinearLayout>
+
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/progress_bar"
+        android:layout_centerInParent="true"
+        android:src="@drawable/litmus_loader"/>
+
+
+    <TextView
+        android:id="@+id/text_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/litmus_close"
+        android:textSize="14sp"
+        android:visibility="gone"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp" />
+
+    <ImageView
+        android:id="@+id/more_menu"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:text="@string/litmus_close"
+        android:src="@drawable/ic_close_black_24"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp" />
+
+
+</RelativeLayout>
