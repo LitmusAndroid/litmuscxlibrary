@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void fnOnButtonClick(View v) {
-        String strAppId = "lmp2_touchpoint"; // to be replaced by the app id shared with you
+        String strAppId = "xxxxxx"; // to be replaced by the app id shared with you
 
         boolean isCopyAllowed = m_checkbox_copy.isChecked();
         boolean isShareAllowed = m_checkbox_share.isChecked();
