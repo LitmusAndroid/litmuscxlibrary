@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -52,10 +53,9 @@ import static android.app.Activity.RESULT_OK;
 import static com.litmusworld.litmuscxlibrary.fragments.dialog.LitmusRatingDialogFragment.fnCloseRatingDialog;
 
 /**
- *
  * This fragment renders the Feedback Page in Webview.
  * This fragment must be initialized using newInstance() method.
- *
+ * <p>
  * Copyright (C) Litmusworld Pvt Ltd - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
@@ -82,6 +82,7 @@ public class LitmusRatingFragment extends Fragment {
     public static final String PARAM_SHOW_IN_DIALOG = "param_show_in_dialog";
     public static final String PARAM_IS_COPY_ALLOWED = "param_is_copy_allowed";
     public static final String PARAM_IS_SHARE_ALLOWED = "param_is_share_allowed";
+    public static final String PARAM_IS_CLOSE_ONLY = "param_is_close_only";
     public static final String PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE = "param_is_more_image_black";
     private static final int PICKFILE_REQUEST_CODE = 1000;
 
@@ -104,8 +105,9 @@ public class LitmusRatingFragment extends Fragment {
     private String strWebLink;
     private HashMap<String, Object> oTagParameters;
 
-    private boolean isCopyAllowed=false;
-    private boolean isShareAllowed=false;
+    private boolean isCloseOnly = false;
+    private boolean isCopyAllowed = false;
+    private boolean isShareAllowed = false;
     private boolean isMoreImageBlackElseWhite = true;
 
     private OnLitmusRatingFragmentListener m_listener;
@@ -121,8 +123,8 @@ public class LitmusRatingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.mContext = context ;
-        if(context instanceof OnLitmusRatingFragmentListener) {
+        this.mContext = context;
+        if (context instanceof OnLitmusRatingFragmentListener) {
             m_listener = (OnLitmusRatingFragmentListener) context;
         }
     }
@@ -136,15 +138,12 @@ public class LitmusRatingFragment extends Fragment {
 
     /**
      * Creates a new Instance for LitmusRatingFragment.
-     * @param strUserId
-     *          User Id
-     * @param strAppId
-     *          App id or Feedback Project Id
-     * @param strUserName
-     *          Name of the User
-     * @param nReminderNumber
-     *          Reminder number
-     * @return  LitmusRatingFragment instance
+     *
+     * @param strUserId       User Id
+     * @param strAppId        App id or Feedback Project Id
+     * @param strUserName     Name of the User
+     * @param nReminderNumber Reminder number
+     * @return LitmusRatingFragment instance
      */
     public static LitmusRatingFragment newInstance(String strUserId, String strAppId,
                                                    String strUserName, int nReminderNumber, String strCustomerEmail,
@@ -156,15 +155,12 @@ public class LitmusRatingFragment extends Fragment {
 
     /**
      * Creates a new Instance for LitmusRatingFragment.
-     * @param strUserId
-     *          User Id
-     * @param strAppId
-     *          App id or Feedback Project Id
-     * @param strUserName
-     *          Name of the User
-     * @param nReminderNumber
-     *          Reminder number
-     * @return  LitmusRatingFragment instance
+     *
+     * @param strUserId       User Id
+     * @param strAppId        App id or Feedback Project Id
+     * @param strUserName     Name of the User
+     * @param nReminderNumber Reminder number
+     * @return LitmusRatingFragment instance
      */
     public static LitmusRatingFragment newInstance(String strBaseUrl, String strUserId, String strAppId,
                                                    String strUserName, int nReminderNumber, String strCustomerEmail,
@@ -172,14 +168,14 @@ public class LitmusRatingFragment extends Fragment {
 
         return newInstance(strBaseUrl, strUserId, strAppId, strUserName, nReminderNumber,
                 strCustomerEmail, isAllowMultipleFeedbacks, null, showInDialog,
-                false,false, true);
+                false, false, false, true);
     }
 
     public static LitmusRatingFragment newInstance(String strBaseUrl, String strUserId, String strAppId,
                                                    String strUserName, int nReminderNumber, String strCustomerEmail,
                                                    boolean isAllowMultipleFeedbacks,
                                                    HashMap<String, Object> oOptionalTagParameters,
-                                                   boolean showInDialog,boolean isCopyAllowed,
+                                                   boolean showInDialog, boolean isCloseOnly, boolean isCopyAllowed,
                                                    boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
 
         Bundle args = new Bundle();
@@ -192,22 +188,25 @@ public class LitmusRatingFragment extends Fragment {
         args.putString(PARAM_BASE_URL, strBaseUrl);
         args.putSerializable(PARAM_TAG_PARAMETERS, oOptionalTagParameters);
         args.putBoolean(PARAM_SHOW_IN_DIALOG, showInDialog);
+        args.putBoolean(PARAM_IS_CLOSE_ONLY, isCloseOnly);
         args.putBoolean(PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         args.putBoolean(PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         args.putBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
+
 
         LitmusRatingFragment fragment = new LitmusRatingFragment();
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static LitmusRatingFragment newInstance(String strWebLink, boolean showInDialog,
+    public static LitmusRatingFragment newInstance(String strWebLink, boolean showInDialog, boolean isCloseOnly,
                                                    boolean isCopyAllowed, boolean isShareAllowed,
                                                    boolean isMoreImageBlackElseWhite) {
 
         Bundle args = new Bundle();
         args.putString(PARAM_WEB_URL, strWebLink);
         args.putBoolean(PARAM_SHOW_IN_DIALOG, showInDialog);
+        args.putBoolean(PARAM_IS_CLOSE_ONLY, isCloseOnly);
         args.putBoolean(PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         args.putBoolean(PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         args.putBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
@@ -249,7 +248,11 @@ public class LitmusRatingFragment extends Fragment {
         m_more_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fnCloseRatingFragment();
+                if(isCloseOnly){
+                    fnCloseRatingFragment();
+                }else{
+                    showPopupMenu(v);
+                }
             }
         });
 
@@ -281,7 +284,7 @@ public class LitmusRatingFragment extends Fragment {
 
                     String strPageName = url.substring(nLastIndex);
 
-                    if(strPageName.equalsIgnoreCase("#thank-you-screen") ||
+                    if (strPageName.equalsIgnoreCase("#thank-you-screen") ||
                             strPageName.equalsIgnoreCase("#thank-you-screen-phone")) {
                         Handler oHandler = new Handler() {
                             @Override
@@ -305,7 +308,7 @@ public class LitmusRatingFragment extends Fragment {
             }
         });
 
-        m_web_view.setWebChromeClient(new WebChromeClient(){
+        m_web_view.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                 mFilePathCallback = filePathCallback;
@@ -326,14 +329,15 @@ public class LitmusRatingFragment extends Fragment {
 
 //            m_web_view.loadUrl(strDashboardUrl);
 
-        if(getArguments() != null) {
+        if (getArguments() != null) {
             strUserId = getArguments().getString(PARAM_USER_ID);
-            strAppId  = getArguments().getString(PARAM_APP_ID);
+            strAppId = getArguments().getString(PARAM_APP_ID);
             strUserName = getArguments().getString(PARAM_USERNAME);
             nReminderNumber = getArguments().getInt(PARAM_REMINDER_NUMBER);
             strCustomerEmail = getArguments().getString(PARAM_CUSTOMER_EMAIL);
             isAllowMultipleFeedbacks = getArguments().getBoolean(PARAM_ALLOW_MULTIPLE_FEEDBACKS);
             strBaseUrl = getArguments().getString(PARAM_BASE_URL);
+            isCloseOnly = getArguments().getBoolean(PARAM_IS_CLOSE_ONLY);
             isCopyAllowed = getArguments().getBoolean(PARAM_IS_COPY_ALLOWED);
             isShareAllowed = getArguments().getBoolean(PARAM_IS_SHARE_ALLOWED);
             isMoreImageBlackElseWhite = getArguments().getBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE);
@@ -341,10 +345,9 @@ public class LitmusRatingFragment extends Fragment {
             // optional tag parameters
             Object oObjectTagParameters = getArguments().getSerializable(PARAM_TAG_PARAMETERS);
 
-            if(oObjectTagParameters != null && oObjectTagParameters instanceof HashMap) {
+            if (oObjectTagParameters != null && oObjectTagParameters instanceof HashMap) {
                 oTagParameters = (HashMap<String, Object>) oObjectTagParameters;
             }
-
 
 
             // web url
@@ -358,10 +361,18 @@ public class LitmusRatingFragment extends Fragment {
 
         }
 
-        if(isMoreImageBlackElseWhite) {
-            m_more_menu.setImageResource(R.drawable.ic_close_black_24);
+        if (isCloseOnly) {
+            if (isMoreImageBlackElseWhite) {
+                m_more_menu.setImageResource(R.drawable.ic_close_black_24);
+            } else {
+                m_more_menu.setImageResource(R.drawable.ic_close_white_24);
+            }
         } else {
-            m_more_menu.setImageResource(R.drawable.ic_close_white_24);
+            if (isMoreImageBlackElseWhite) {
+                m_more_menu.setImageResource(R.drawable.ic_more_vert_black_24dp);
+            } else {
+                m_more_menu.setImageResource(R.drawable.ic_more_vert_white_24dp);
+            }
         }
 
         m_ll_main_reload.setOnClickListener(new View.OnClickListener() {
@@ -379,7 +390,6 @@ public class LitmusRatingFragment extends Fragment {
     }
 
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -388,9 +398,9 @@ public class LitmusRatingFragment extends Fragment {
                     : data.getData();
             Uri[] resultsArray = new Uri[1];
             resultsArray[0] = result;
-            if (data!=null){
+            if (data != null) {
                 mFilePathCallback.onReceiveValue(resultsArray);
-            }else {
+            } else {
                 mFilePathCallback.onReceiveValue(null);
             }
 
@@ -405,11 +415,11 @@ public class LitmusRatingFragment extends Fragment {
         MenuItem mShareLink = popup.getMenu().findItem(R.id.action_share_link);
         MenuItem mClose = popup.getMenu().findItem(R.id.action_close);
 
-        if (isCopyAllowed){
+        if (isCopyAllowed) {
             mCopyLink.setVisible(true);
         }
 
-        if (isShareAllowed){
+        if (isShareAllowed) {
             mShareLink.setVisible(true);
         }
         mCopyLink.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -459,7 +469,6 @@ public class LitmusRatingFragment extends Fragment {
         String webUrl = m_web_view.getUrl();
 
 
-
         if (clipboard != null) {
             ClipData clip = ClipData.newPlainText("link", webUrl);
             Toast.makeText(getActivity(), "Copied to ClipBoard", Toast.LENGTH_SHORT).show();
@@ -468,7 +477,7 @@ public class LitmusRatingFragment extends Fragment {
     }
 
     private void fnCloseRatingFragment() {
-        if(m_listener != null) {
+        if (m_listener != null) {
             m_listener.onRatingCloseClicked();
         }
 
@@ -485,7 +494,7 @@ public class LitmusRatingFragment extends Fragment {
      */
     private void fnRequestFeedBackDetail() {
 
-        if(strWebLink != null && strWebLink.length() > 0) {
+        if (strWebLink != null && strWebLink.length() > 0) {
 
             m_ll_main_reload.setVisibility(View.GONE);
             m_progress_view.setVisibility(View.GONE);
@@ -501,14 +510,14 @@ public class LitmusRatingFragment extends Fragment {
         int nSavedReminderNumber = LitmusApplicationSharedPreferences.getInstance(getActivity()).fnGetNotificationReminderNumber();
         String strSavedFeedbackLogoUrl = LitmusApplicationSharedPreferences.getInstance(getActivity()).fnGetNotificationFeedbackLongUrl();
 
-        if(strSavedUserId.length() > 0 && strSavedAppId.length() > 0 && nReminderNumber != -1) {
+        if (strSavedUserId.length() > 0 && strSavedAppId.length() > 0 && nReminderNumber != -1) {
 
-            if(strAppId.equals(strSavedAppId) && strUserId.equals(strSavedUserId)) {
+            if (strAppId.equals(strSavedAppId) && strUserId.equals(strSavedUserId)) {
 
-                if(nReminderNumber == nSavedReminderNumber) {
+                if (nReminderNumber == nSavedReminderNumber) {
                     // load saved url
 
-                    if(strSavedFeedbackLogoUrl.length() > 0) {
+                    if (strSavedFeedbackLogoUrl.length() > 0) {
 
                         m_ll_main_reload.setVisibility(View.GONE);
                         m_progress_view.setVisibility(View.GONE);
@@ -522,20 +531,19 @@ public class LitmusRatingFragment extends Fragment {
             }
         }
 
-        if(LitmusUtilities.isConnected(getActivity())) {
+        if (LitmusUtilities.isConnected(getActivity())) {
             m_progress_view.setVisibility(View.VISIBLE);
             m_ll_main_reload.setVisibility(View.GONE);
 
             ConnectionAsyncTask oConnectionAsyncTask = new ConnectionAsyncTask(listener, getActivity());
 
-            if(strBaseUrl != null && strBaseUrl.length() > 0) {
+            if (strBaseUrl != null && strBaseUrl.length() > 0) {
                 oConnectionAsyncTask.fnGenerateFeedbackUrl2(strBaseUrl, strAppId, strUserId,
                         strUserName, strCustomerEmail, isAllowMultipleFeedbacks, oTagParameters);
             } else {
                 oConnectionAsyncTask.fnGenerateFeedbackUrl2(strAppId, strUserId, strUserName,
                         strCustomerEmail, isAllowMultipleFeedbacks, oTagParameters);
             }
-
 
 
             oConnectionAsyncTask.execute();
@@ -550,7 +558,7 @@ public class LitmusRatingFragment extends Fragment {
         @Override
         public void onResultReceived(String response, int requestId, boolean isCancelled) {
 
-            if(!isCancelled && isAdded() && !getActivity().isFinishing()) {
+            if (!isCancelled && isAdded() && !getActivity().isFinishing()) {
 
                 switch (requestId) {
 
@@ -559,13 +567,13 @@ public class LitmusRatingFragment extends Fragment {
                         m_ll_main_reload.setVisibility(View.GONE);
                         m_progress_view.setVisibility(View.GONE);
 
-                        if(response != null) {
+                        if (response != null) {
 
                             LitmusParseUtility parser = new LitmusParseUtility();
 
                             Object object = parser.fnGetKeyValueAll(response, "data");
 
-                            if(object != null && object instanceof JSONObject) {
+                            if (object != null && object instanceof JSONObject) {
                                 JSONObject oJsonObject = (JSONObject) object;
 
                                 int nCode = oJsonObject.optInt("code");
@@ -575,9 +583,9 @@ public class LitmusRatingFragment extends Fragment {
                                     String strFeedbackRequestToken = oJsonObject.optString("feedback_request_token");
                                     String strLongUrl = oJsonObject.optString("long_url");
                                     // String strShortUrl = oJsonObject.optString("short_url");
-                                    boolean has_responded = oJsonObject.optBoolean("has_responded",false);
+                                    boolean has_responded = oJsonObject.optBoolean("has_responded", false);
 
-                                    if(has_responded){
+                                    if (has_responded) {
 
                                         FeedbackSubmittedDialog(mContext);
 
@@ -635,7 +643,7 @@ public class LitmusRatingFragment extends Fragment {
         }
     }
 
-    public void FeedbackSubmittedDialog(final Context mContext){
+    public void FeedbackSubmittedDialog(final Context mContext) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             builder = new AlertDialog.Builder(mContext, android.R.style.Theme_Material_Light_Dialog_Alert);
@@ -655,8 +663,7 @@ public class LitmusRatingFragment extends Fragment {
         try {
 
             builder.show();
-        }
-        catch (WindowManager.BadTokenException e) {
+        } catch (WindowManager.BadTokenException e) {
             //use a log message
             e.printStackTrace();
         }

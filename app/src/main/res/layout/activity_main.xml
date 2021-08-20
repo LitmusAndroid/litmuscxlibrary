@@ -37,7 +37,12 @@
             android:layout_height="wrap_content"
             android:text="@string/share"
             android:layout_marginTop="10dp"/>
-
+        <CheckBox
+            android:id="@+id/checkbox_close_only"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/close_only"
+            android:layout_marginTop="10dp"/>
         <CheckBox
             android:id="@+id/checkbox_dialog"
             android:layout_width="wrap_content"

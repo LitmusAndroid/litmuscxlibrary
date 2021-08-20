@@ -3,6 +3,7 @@ package com.litmusworld.litmuscxlibrary_android;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 
@@ -10,15 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import com.litmusworld.litmuscxlibrary.activities.LitmusRatingActivity;
+import com.litmusworld.litmuscxlibrary.fragments.LitmusRatingFragment;
 import com.litmusworld.litmuscxlibrary.fragments.dialog.LitmusRatingDialogFragment;
 
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LitmusRatingFragment.OnLitmusRatingFragmentListener {
 
     private CheckBox m_checkbox_copy;
     private CheckBox m_checkbox_share;
     private CheckBox m_checkbox_dialog;
+    private CheckBox m_checkbox_close;
     private CheckBox m_checkbox_more_image_black;
 
     @Override
@@ -29,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         m_checkbox_copy = (CheckBox) findViewById(R.id.checkbox_copy);
         m_checkbox_share = (CheckBox) findViewById(R.id.checkbox_share);
         m_checkbox_dialog = (CheckBox) findViewById(R.id.checkbox_dialog);
+        m_checkbox_close = (CheckBox) findViewById(R.id.checkbox_close_only);
         m_checkbox_more_image_black = (CheckBox) findViewById(R.id.checkbox_more_image_black);
 
         // fnOnButtonClick(null);
@@ -41,15 +45,17 @@ public class MainActivity extends AppCompatActivity {
         boolean isCopyAllowed = m_checkbox_copy.isChecked();
         boolean isShareAllowed = m_checkbox_share.isChecked();
         boolean isShowDialog = m_checkbox_dialog.isChecked();
+        boolean isCloseOnly = m_checkbox_close.isChecked();
+
         boolean isMoreImageBlackElseWhite = m_checkbox_more_image_black.isChecked();
 
         fnOpenLitmusFeedback(this, strAppId, getRandomString(10),
-                isShowDialog, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                isShowDialog, isCloseOnly,isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
     }
 
 
     public static void fnOpenLitmusFeedback(Context context, String strAppId, String strRandomId,
-                                            boolean showInDialog, boolean isCopyAllowed, boolean isShareAllowed,
+                                            boolean showInDialog,boolean isCloseOnly ,boolean isCopyAllowed, boolean isShareAllowed,
                                             boolean isMoreImageBlackElseWhite) {
 
         String strBaseUrl = null; // Base url to be used to get conversation url (Optional)
@@ -68,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
 
                 LitmusRatingDialogFragment.newInstanceAndShow(strBaseUrl, strUserId, strAppId, strUserName,
                         nReminderNumber, strUserEmail, isAllowMultipleFeedbacks, null,
-                        ((FragmentActivity) context).getSupportFragmentManager(), isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                        ((FragmentActivity) context).getSupportFragmentManager(), isCloseOnly,isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
             }
         } else {
             LitmusRatingActivity.fnStartActivity(strUserId, strAppId, strUserName, nReminderNumber,
-                    strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                    strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context,isCloseOnly, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
         }
 
     }
@@ -85,5 +91,10 @@ public class MainActivity extends AppCompatActivity {
         for(int i=0;i<sizeOfRandomString;++i)
             sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
         return sb.toString();
+    }
+
+    @Override
+    public void onRatingCloseClicked() {
+        Log.d("Test","Fragment test result");
     }
 }
