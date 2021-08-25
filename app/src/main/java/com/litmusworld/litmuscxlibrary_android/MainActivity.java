@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
@@ -21,18 +23,18 @@ public class MainActivity extends AppCompatActivity implements LitmusRatingFragm
     private CheckBox m_checkbox_copy;
     private CheckBox m_checkbox_share;
     private CheckBox m_checkbox_dialog;
-    private CheckBox m_checkbox_close;
+    private TextView m_textView_message;
     private CheckBox m_checkbox_more_image_black;
+    int count =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        m_textView_message = (TextView) findViewById(R.id.textview_message);
         m_checkbox_copy = (CheckBox) findViewById(R.id.checkbox_copy);
         m_checkbox_share = (CheckBox) findViewById(R.id.checkbox_share);
         m_checkbox_dialog = (CheckBox) findViewById(R.id.checkbox_dialog);
-        m_checkbox_close = (CheckBox) findViewById(R.id.checkbox_close_only);
         m_checkbox_more_image_black = (CheckBox) findViewById(R.id.checkbox_more_image_black);
 
         // fnOnButtonClick(null);
@@ -45,17 +47,16 @@ public class MainActivity extends AppCompatActivity implements LitmusRatingFragm
         boolean isCopyAllowed = m_checkbox_copy.isChecked();
         boolean isShareAllowed = m_checkbox_share.isChecked();
         boolean isShowDialog = m_checkbox_dialog.isChecked();
-        boolean isCloseOnly = m_checkbox_close.isChecked();
 
         boolean isMoreImageBlackElseWhite = m_checkbox_more_image_black.isChecked();
 
         fnOpenLitmusFeedback(this, strAppId, getRandomString(10),
-                isShowDialog, isCloseOnly,isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                isShowDialog, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
     }
 
 
     public static void fnOpenLitmusFeedback(Context context, String strAppId, String strRandomId,
-                                            boolean showInDialog,boolean isCloseOnly ,boolean isCopyAllowed, boolean isShareAllowed,
+                                            boolean showInDialog,boolean isCopyAllowed, boolean isShareAllowed,
                                             boolean isMoreImageBlackElseWhite) {
 
         String strBaseUrl = null; // Base url to be used to get conversation url (Optional)
@@ -74,11 +75,11 @@ public class MainActivity extends AppCompatActivity implements LitmusRatingFragm
 
                 LitmusRatingDialogFragment.newInstanceAndShow(strBaseUrl, strUserId, strAppId, strUserName,
                         nReminderNumber, strUserEmail, isAllowMultipleFeedbacks, null,
-                        ((FragmentActivity) context).getSupportFragmentManager(), isCloseOnly,isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                        ((FragmentActivity) context).getSupportFragmentManager(),isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
             }
         } else {
             LitmusRatingActivity.fnStartActivity(strUserId, strAppId, strUserName, nReminderNumber,
-                    strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context,isCloseOnly, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
+                    strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context, isCopyAllowed, isShareAllowed, isMoreImageBlackElseWhite);
         }
 
     }
@@ -95,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements LitmusRatingFragm
 
     @Override
     public void onRatingCloseClicked() {
-        Log.d("Test","Fragment test result");
+        count =count+1;
+        String message =getString(R.string.callback_message) + count;
+        m_textView_message.setText(message);
     }
 }

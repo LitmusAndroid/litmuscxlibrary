@@ -1,5 +1,8 @@
 package com.litmusworld.litmuscxlibrary.fragments;
 
+import static android.app.Activity.RESULT_OK;
+import static com.litmusworld.litmuscxlibrary.fragments.dialog.LitmusRatingDialogFragment.fnCloseRatingDialog;
+
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,13 +19,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.core.content.ContextCompat;
-
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,6 +34,11 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+
 import com.litmusworld.litmuscxlibrary.R;
 import com.litmusworld.litmuscxlibrary.connection.ConnectionAsyncTask;
 import com.litmusworld.litmuscxlibrary.databases.LitmusApplicationSharedPreferences;
@@ -48,9 +49,6 @@ import com.litmusworld.litmuscxlibrary.utils.LitmusUtilities;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
-import static android.app.Activity.RESULT_OK;
-import static com.litmusworld.litmuscxlibrary.fragments.dialog.LitmusRatingDialogFragment.fnCloseRatingDialog;
 
 /**
  * This fragment renders the Feedback Page in Webview.
@@ -82,7 +80,6 @@ public class LitmusRatingFragment extends Fragment {
     public static final String PARAM_SHOW_IN_DIALOG = "param_show_in_dialog";
     public static final String PARAM_IS_COPY_ALLOWED = "param_is_copy_allowed";
     public static final String PARAM_IS_SHARE_ALLOWED = "param_is_share_allowed";
-    public static final String PARAM_IS_CLOSE_ONLY = "param_is_close_only";
     public static final String PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE = "param_is_more_image_black";
     private static final int PICKFILE_REQUEST_CODE = 1000;
 
@@ -105,7 +102,6 @@ public class LitmusRatingFragment extends Fragment {
     private String strWebLink;
     private HashMap<String, Object> oTagParameters;
 
-    private boolean isCloseOnly = false;
     private boolean isCopyAllowed = false;
     private boolean isShareAllowed = false;
     private boolean isMoreImageBlackElseWhite = true;
@@ -167,15 +163,15 @@ public class LitmusRatingFragment extends Fragment {
                                                    boolean isAllowMultipleFeedbacks, boolean showInDialog) {
 
         return newInstance(strBaseUrl, strUserId, strAppId, strUserName, nReminderNumber,
-                strCustomerEmail, isAllowMultipleFeedbacks, null, showInDialog,
-                false, false, false, true);
+                strCustomerEmail, isAllowMultipleFeedbacks, null, showInDialog
+                , false, false, true);
     }
 
     public static LitmusRatingFragment newInstance(String strBaseUrl, String strUserId, String strAppId,
                                                    String strUserName, int nReminderNumber, String strCustomerEmail,
                                                    boolean isAllowMultipleFeedbacks,
                                                    HashMap<String, Object> oOptionalTagParameters,
-                                                   boolean showInDialog, boolean isCloseOnly, boolean isCopyAllowed,
+                                                   boolean showInDialog,  boolean isCopyAllowed,
                                                    boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
 
         Bundle args = new Bundle();
@@ -188,7 +184,6 @@ public class LitmusRatingFragment extends Fragment {
         args.putString(PARAM_BASE_URL, strBaseUrl);
         args.putSerializable(PARAM_TAG_PARAMETERS, oOptionalTagParameters);
         args.putBoolean(PARAM_SHOW_IN_DIALOG, showInDialog);
-        args.putBoolean(PARAM_IS_CLOSE_ONLY, isCloseOnly);
         args.putBoolean(PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         args.putBoolean(PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         args.putBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
@@ -199,14 +194,13 @@ public class LitmusRatingFragment extends Fragment {
         return fragment;
     }
 
-    public static LitmusRatingFragment newInstance(String strWebLink, boolean showInDialog, boolean isCloseOnly,
+    public static LitmusRatingFragment newInstance(String strWebLink, boolean showInDialog,
                                                    boolean isCopyAllowed, boolean isShareAllowed,
                                                    boolean isMoreImageBlackElseWhite) {
 
         Bundle args = new Bundle();
         args.putString(PARAM_WEB_URL, strWebLink);
         args.putBoolean(PARAM_SHOW_IN_DIALOG, showInDialog);
-        args.putBoolean(PARAM_IS_CLOSE_ONLY, isCloseOnly);
         args.putBoolean(PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         args.putBoolean(PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         args.putBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
@@ -248,10 +242,11 @@ public class LitmusRatingFragment extends Fragment {
         m_more_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isCloseOnly){
-                    fnCloseRatingFragment();
-                }else{
+                if(isCopyAllowed||isShareAllowed){
                     showPopupMenu(v);
+                }else{
+                    fnCloseRatingFragment();
+
                 }
             }
         });
@@ -337,7 +332,6 @@ public class LitmusRatingFragment extends Fragment {
             strCustomerEmail = getArguments().getString(PARAM_CUSTOMER_EMAIL);
             isAllowMultipleFeedbacks = getArguments().getBoolean(PARAM_ALLOW_MULTIPLE_FEEDBACKS);
             strBaseUrl = getArguments().getString(PARAM_BASE_URL);
-            isCloseOnly = getArguments().getBoolean(PARAM_IS_CLOSE_ONLY);
             isCopyAllowed = getArguments().getBoolean(PARAM_IS_COPY_ALLOWED);
             isShareAllowed = getArguments().getBoolean(PARAM_IS_SHARE_ALLOWED);
             isMoreImageBlackElseWhite = getArguments().getBoolean(PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE);
@@ -361,18 +355,19 @@ public class LitmusRatingFragment extends Fragment {
 
         }
 
-        if (isCloseOnly) {
-            if (isMoreImageBlackElseWhite) {
-                m_more_menu.setImageResource(R.drawable.ic_close_black_24);
-            } else {
-                m_more_menu.setImageResource(R.drawable.ic_close_white_24);
-            }
-        } else {
+        if (isCopyAllowed||isShareAllowed) {
             if (isMoreImageBlackElseWhite) {
                 m_more_menu.setImageResource(R.drawable.ic_more_vert_black_24dp);
             } else {
                 m_more_menu.setImageResource(R.drawable.ic_more_vert_white_24dp);
             }
+        } else {
+            if (isMoreImageBlackElseWhite) {
+                m_more_menu.setImageResource(R.drawable.ic_close_black_24);
+            } else {
+                m_more_menu.setImageResource(R.drawable.ic_close_white_24);
+            }
+
         }
 
         m_ll_main_reload.setOnClickListener(new View.OnClickListener() {

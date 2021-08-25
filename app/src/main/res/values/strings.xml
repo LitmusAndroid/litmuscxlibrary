@@ -3,6 +3,7 @@
     <string name="copy">Copy</string>
     <string name="share">Share</string>
     <string name="dialog">Dialog</string>
-    <string name="close_only">Close Only</string>
+    <string name="enable_more">Enable more options</string>
     <string name="more_image_black">More Image Black</string>
+    <string name="callback_message">Callback triggered - </string>
 </resources>

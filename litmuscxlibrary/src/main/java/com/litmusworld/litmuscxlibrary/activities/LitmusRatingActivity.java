@@ -40,13 +40,13 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
     private HashMap<String, Object> oTagParameters;
     private static LitmusRatingFragment.OnLitmusRatingFragmentListener m_listener;
 
-    private boolean isCopyAllowed=false,isShareAllowed=false,isCloseOnly=false;
+    private boolean isCopyAllowed=false,isShareAllowed=false;
     private boolean isMoreImageBlackElseWhite = true;
 
     public static Intent fnGetIntent(Context context, String strUserId, String strAppId,
                                      String strUserName, int nReminderNumber, String strUserEmail,
                                      boolean isAllowMultipleFeedbacks, String strBaseUrl,
-                                     HashMap<String, Object> oOptionalTagParameters,boolean isCloseOnly,boolean isCopyAllowed,
+                                     HashMap<String, Object> oOptionalTagParameters,boolean isCopyAllowed,
                                      boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
         Intent intent = new Intent(context, LitmusRatingActivity.class);
         intent.putExtra(LitmusRatingFragment.PARAM_USER_ID, strUserId);
@@ -57,19 +57,17 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
         intent.putExtra(LitmusRatingFragment.PARAM_ALLOW_MULTIPLE_FEEDBACKS, isAllowMultipleFeedbacks);
         intent.putExtra(LitmusRatingFragment.PARAM_BASE_URL, strBaseUrl);
         intent.putExtra(LitmusRatingFragment.PARAM_TAG_PARAMETERS, oOptionalTagParameters);
-        intent.putExtra(LitmusRatingFragment.PARAM_IS_CLOSE_ONLY, isCloseOnly);
-        intent.putExtra(LitmusRatingFragment.PARAM_IS_COPY_ALLOWED, isCopyAllowed);
+       intent.putExtra(LitmusRatingFragment.PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         intent.putExtra(LitmusRatingFragment.PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         intent.putExtra(LitmusRatingFragment.PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
 
         return intent;
     }
 
-    public static Intent fnGetIntentForWebLink(Context context, String strWeblink, boolean isCloseOnly,boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
+    public static Intent fnGetIntentForWebLink(Context context, String strWeblink, boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
         Intent intent = new Intent(context, LitmusRatingActivity.class);
         intent.putExtra(LitmusRatingFragment.PARAM_WEB_URL, strWeblink);
-        intent.putExtra(LitmusRatingFragment.PARAM_IS_CLOSE_ONLY, isCloseOnly);
-        intent.putExtra(LitmusRatingFragment.PARAM_IS_COPY_ALLOWED, isCopyAllowed);
+       intent.putExtra(LitmusRatingFragment.PARAM_IS_COPY_ALLOWED, isCopyAllowed);
         intent.putExtra(LitmusRatingFragment.PARAM_IS_SHARE_ALLOWED, isShareAllowed);
         intent.putExtra(LitmusRatingFragment.PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, isMoreImageBlackElseWhite);
         return intent;
@@ -78,25 +76,25 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
     public static void fnStartActivity(String strUserId, String strAppId,String strUserName,
                                        int nReminderNumber, String strUserEmail,
                                        boolean isAllowMultipleFeedbacks , Context context,
-                                       boolean isCloseOnly, boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
+                                     boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
 
         fnStartActivity(strUserId, strAppId, strUserName, nReminderNumber,
-                strUserEmail, isAllowMultipleFeedbacks, null, context,isCloseOnly,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
+                strUserEmail, isAllowMultipleFeedbacks, null, context,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
     }
 
     public static void fnStartActivity(String strUserId, String strAppId,String strUserName,
                                        int nReminderNumber, String strUserEmail,
-                                       boolean isAllowMultipleFeedbacks, String strBaseUrl, Context context,boolean isCloseOnly,boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
+                                       boolean isAllowMultipleFeedbacks, String strBaseUrl, Context context,boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
         fnStartActivity(strUserId, strAppId, strUserName, nReminderNumber,
-                strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context,isCloseOnly,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite); //check hardcoded
+                strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, null, context,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite); //check hardcoded
     }
 
     public static void fnStartActivity(String strUserId, String strAppId,String strUserName,
                                        int nReminderNumber, String strUserEmail,
                                        boolean isAllowMultipleFeedbacks, String strBaseUrl,
-                                       HashMap<String, Object> oOptionalTagParameters, Context context,boolean isCloseOnly,boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
+                                       HashMap<String, Object> oOptionalTagParameters, Context context,boolean isCopyAllowed,boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
         Intent oIntent = fnGetIntent(context, strUserId, strAppId, strUserName, nReminderNumber,
-                strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, oOptionalTagParameters,isCloseOnly,isCopyAllowed,isShareAllowed,isMoreImageBlackElseWhite);
+                strUserEmail, isAllowMultipleFeedbacks, strBaseUrl, oOptionalTagParameters,isCopyAllowed,isShareAllowed,isMoreImageBlackElseWhite);
         if(context instanceof LitmusRatingFragment.OnLitmusRatingFragmentListener) {
             m_listener = (LitmusRatingFragment.OnLitmusRatingFragmentListener) context;
         }
@@ -104,8 +102,8 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
 
     }
 
-    public static void fnOpenWebLinkActivity(String strWeblink, Context context,boolean isCloseOnly,boolean isCopyAllowed, boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
-        Intent oIntent = fnGetIntentForWebLink(context, strWeblink,isCloseOnly,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
+    public static void fnOpenWebLinkActivity(String strWeblink, Context context ,boolean isCopyAllowed, boolean isShareAllowed, boolean isMoreImageBlackElseWhite) {
+        Intent oIntent = fnGetIntentForWebLink(context, strWeblink,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
         if(context instanceof LitmusRatingFragment.OnLitmusRatingFragmentListener) {
             m_listener = (LitmusRatingFragment.OnLitmusRatingFragmentListener) context;
         }
@@ -134,7 +132,6 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
             strUserEmail = getIntent().getStringExtra(LitmusRatingFragment.PARAM_CUSTOMER_EMAIL);
             strWebLink = getIntent().getStringExtra(LitmusRatingFragment.PARAM_WEB_URL);
             strBaseUrl = getIntent().getStringExtra(LitmusRatingFragment.PARAM_BASE_URL);
-            isCloseOnly = getIntent().getBooleanExtra(LitmusRatingFragment.PARAM_IS_CLOSE_ONLY, false);
             isCopyAllowed = getIntent().getBooleanExtra(LitmusRatingFragment.PARAM_IS_COPY_ALLOWED, false);
             isShareAllowed = getIntent().getBooleanExtra(LitmusRatingFragment.PARAM_IS_SHARE_ALLOWED, false);
             isMoreImageBlackElseWhite = getIntent().getBooleanExtra(LitmusRatingFragment.PARAM_IS_MORE_IMAGE_BLACK_ELSE_WHITE, true);
@@ -147,10 +144,10 @@ public class LitmusRatingActivity extends FragmentActivity implements LitmusRati
         if(strAppId != null && strAppId.length() > 0) {
 
             oLitmusRatingFragment = LitmusRatingFragment.newInstance(strBaseUrl, strUserId,
-                        strAppId, strUserName, nReminderNumber,strUserEmail, isAllowMultipleFeedbacks, oTagParameters, false,isCloseOnly,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
+                        strAppId, strUserName, nReminderNumber,strUserEmail, isAllowMultipleFeedbacks, oTagParameters, false,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
 
         } else if(strWebLink != null && strWebLink.length() > 0) {
-            oLitmusRatingFragment = LitmusRatingFragment.newInstance(strWebLink, false,isCloseOnly,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
+            oLitmusRatingFragment = LitmusRatingFragment.newInstance(strWebLink, false,isCopyAllowed,isShareAllowed, isMoreImageBlackElseWhite);
         }
 
         if(oLitmusRatingFragment != null) {

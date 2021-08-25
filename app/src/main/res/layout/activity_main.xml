@@ -37,12 +37,7 @@
             android:layout_height="wrap_content"
             android:text="@string/share"
             android:layout_marginTop="10dp"/>
-        <CheckBox
-            android:id="@+id/checkbox_close_only"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/close_only"
-            android:layout_marginTop="10dp"/>
+
         <CheckBox
             android:id="@+id/checkbox_dialog"
             android:layout_width="wrap_content"
@@ -57,6 +52,12 @@
             android:text="@string/more_image_black"
             android:layout_marginTop="10dp"
             android:checked="true"/>
+
+
+        <TextView
+            android:id="@+id/textview_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
 
     </LinearLayout>
